@@ -2,6 +2,7 @@ import Navbar from "./Navbar"
 import Footer from "./Footer"
 import Bar from "./Bar"
 import Hero from "./Hero"
+import Home from "./Home"
 
 function App() {
 
@@ -11,6 +12,7 @@ function App() {
         <Bar />
         <Hero />
         <Navbar />
+        <Home />
         <Footer />
       </div>
     </div>
