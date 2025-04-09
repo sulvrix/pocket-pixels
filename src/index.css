@@ -2,39 +2,14 @@
 
 @import "tailwindcss";
 
+
 * {
     font-family: "Kanit", sans-serif;
     font-weight: 700;
+    /* offset-x | offset-y | blur-radius | color */
 }
 
-.pokemon-table-container {
-    margin: 20px;
-    overflow-x: auto;
-}
+.text-shadow {
 
-.pokemon-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.pokemon-table th,
-.pokemon-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.pokemon-table th {
-    background-color: #f2f2f2;
-    position: sticky;
-    top: 0;
-}
-
-.pokemon-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.pokemon-table tr:hover {
-    background-color: #e9e9e9;
+    text-shadow: 1px 1px 2px black;
 }
