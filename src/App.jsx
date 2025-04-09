@@ -1,19 +1,12 @@
-import Navbar from "./Navbar"
-import Footer from "./Footer"
-import Bar from "./Bar"
-import Hero from "./Hero"
-import Home from "./Home"
-import Background from "./assets/background.png";
+import React from 'react';
+import PokemonTable from './PokemonTable';
+import pokemonData from '.assets/pokemon-data.json';
 
 function App() {
 
   return (
     <div className="App">
-      <Bar />
-      <Hero />
-      <Navbar />
-      <Home />
-      <Footer />
+      <PokemonTable pokemonData={pokemonData} />
     </div>
   )
 }
