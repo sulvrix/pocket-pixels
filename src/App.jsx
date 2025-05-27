@@ -1,17 +1,18 @@
-import React from 'react';
-import PokemonTable from './components/PokemonTable';
-import pokemonData from './data/pokemon-data.json';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PocketDex from "./PocketDex";
+import PokemonDetails from './components/PokemonDetails';
 
 function App() {
 
-
-  console.log('Full pokemonData:', pokemonData);
-  console.log('Venusaur data:', pokemonData["3"]);
-
   return (
-    <div className="App">
-      <PokemonTable pokemonData={pokemonData} />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<PocketDex />} />
+          <Route path="/pokemon/:id" element={<PokemonDetails />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
