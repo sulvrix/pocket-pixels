@@ -1,16 +1,350 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pocket Pixels</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Pokédex</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #ef5350;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        #search-container {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        #search {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            max-width: 1200px;
+            background-color: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        th.sortable:hover {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        #details {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 1rem;
+            border: 1px solid #ddd;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #back-button {
+            margin-top: 1rem;
+            background-color: #ef5350;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        #back-button:hover {
+            background-color: #d84340;
+        }
+
+        .pokemon-image {
+            width: 200px;
+            height: 200px;
+            display: block;
+            margin: 0 auto 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: white;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .grass {
+            background-color: #78C850;
+        }
+
+        .poison {
+            background-color: #A040A0;
+        }
+
+        .fire {
+            background-color: #F08030;
+        }
+
+        .flying {
+            background-color: #A890F0;
+        }
+
+        .water {
+            background-color: #6890F0;
+        }
+
+        .bug {
+            background-color: #A8B820;
+        }
+
+        .normal {
+            background-color: #A8A878;
+        }
+
+        .ghost {
+            background-color: #705898;
+        }
+
+        .fairy {
+            background-color: #985877;
+        }
+
+        .psychic {
+            background-color: #9a3f8a;
+        }
+    </style>
 </head>
 
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+    <!-- <header>
+        <h1>Mini Pokédex</h1>
+    </header> -->
+    <div id="search-container">
+        <input type="text" id="search" placeholder="Search Pokémon by name...">
+    </div>
+    <main id="main-content">
+        <table id="pokemon-table">
+            <thead>
+                <tr>
+                    <th class="sortable" data-key="id">#</th>
+                    <th class="sortable" data-key="name">Name</th>
+                    <th class="sortable" data-key="types">Types</th>
+                    <th class="sortable" data-key="form">Form</th>
+                    <th class="sortable" data-key="total">Total</th>
+                    <th class="sortable" data-key="hp">HP</th>
+                    <th class="sortable" data-key="attack">Attack</th>
+                    <th class="sortable" data-key="defense">Defense</th>
+                    <th class="sortable" data-key="spAttack">Sp. Attack</th>
+                    <th class="sortable" data-key="spDefense">Sp. Defense</th>
+                    <th class="sortable" data-key="speed">Speed</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div id="details" class="hidden"></div>
+    </main>
+
+    <script>
+        const tableBody = document.querySelector("#pokemon-table tbody");
+        const detailsDiv = document.getElementById("details");
+        const searchInput = document.getElementById("search");
+        const tableHeaders = document.querySelectorAll("th.sortable");
+
+        let currentSort = { key: null, direction: 1 };
+        let pokemonList = [];
+
+        // Fetch data from JSON file
+        fetch('data/pokemon-data.json')
+            .then(response => response.json())
+            .then(data => {
+                // Transform the data to match our structure
+                pokemonList = data.map(pokemon => {
+                    const stats = pokemon.data.slice(7, 14).map(stat => {
+                        // Remove any text in parentheses and convert to number
+                        const cleanStat = stat.split(' ')[0];
+                        return parseInt(cleanStat, 10);
+                    });
+
+                    return {
+                        id: parseInt(pokemon.id, 10),
+                        name: pokemon.data[0].toLowerCase(),
+                        types: pokemon.data.slice(1, 3).filter(type => type !== "-"),
+                        form: pokemon.data[3],
+                        abilities: pokemon.data.slice(4, 7).filter(ability => ability !== "-"),
+                        total: parseInt(pokemon.data[7].split(' ')[0], 10),
+                        hp: stats[1],
+                        attack: stats[2],
+                        defense: stats[3],
+                        spAttack: stats[4],
+                        spDefense: stats[5],
+                        speed: stats[6],
+                        spawnLocation: pokemon.data[13],
+                        spawnTime: pokemon.data[14],
+                        sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`
+                    };
+                });
+
+                displayedList = [...pokemonList];
+                displayPokemonList();
+
+                if (location.hash.startsWith("#pokemon/")) {
+                    const name = location.hash.split("/")[1];
+                    showPokemonDetails(name);
+                }
+            })
+            .catch(error => {
+                console.error("Error loading Pokémon data:", error);
+                // Fallback to empty array if there's an error
+                pokemonList = [];
+                displayedList = [];
+                displayPokemonList();
+            });
+
+        let displayedList = [];
+
+        function displayPokemonList() {
+            tableBody.innerHTML = "";
+            displayedList.forEach((pokemon) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${pokemon.id}</td>
+                    <td>${pokemon.name}</td>
+                    <td>${pokemon.types.map(type => `<span class="type-badge ${type.toLowerCase()}">${type}</span>`).join('')}</td>
+                    <td>${pokemon.form}</td>
+                    <td>${pokemon.total}</td>
+                    <td>${pokemon.hp}</td>
+                    <td>${pokemon.attack}</td>
+                    <td>${pokemon.defense}</td>
+                    <td>${pokemon.spAttack}</td>
+                    <td>${pokemon.spDefense}</td>
+                    <td>${pokemon.speed}</td>
+                `;
+                tr.addEventListener("click", () => {
+                    history.pushState({}, "", `#pokemon/${pokemon.name}`);
+                    showPokemonDetails(pokemon.name);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function showPokemonDetails(name) {
+            const pokemon = pokemonList.find(p => p.name === name);
+            if (!pokemon) return;
+
+            detailsDiv.innerHTML = `
+                <h2>${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</h2>
+                <img src="${pokemon.sprite}" alt="${pokemon.name}" class="pokemon-image" />
+                
+                <div class="details-grid">
+                    <div>
+                        <h3>Basic Info</h3>
+                        <p><strong>ID:</strong> ${pokemon.id}</p>
+                        <p><strong>Form:</strong> ${pokemon.form}</p>
+                        <p><strong>Types:</strong> ${pokemon.types.map(type => `<span class="type-badge ${type.toLowerCase()}">${type}</span>`).join('')}</p>
+                    </div>
+                    
+                    <div>
+                        <h3>Stats</h3>
+                        <p><strong>Total:</strong> ${pokemon.total}</p>
+                        <p><strong>HP:</strong> ${pokemon.hp}</p>
+                        <p><strong>Attack:</strong> ${pokemon.attack}</p>
+                        <p><strong>Defense:</strong> ${pokemon.defense}</p>
+                        <p><strong>Sp. Attack:</strong> ${pokemon.spAttack}</p>
+                        <p><strong>Sp. Defense:</strong> ${pokemon.spDefense}</p>
+                        <p><strong>Speed:</strong> ${pokemon.speed}</p>
+                    </div>
+                    
+                    <div>
+                        <h3>Abilities</h3>
+                        <ul>
+                            ${pokemon.abilities.map(ability => `<li>${ability}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3>Spawn Info</h3>
+                        <p><strong>Location:</strong> ${pokemon.spawnLocation}</p>
+                        <p><strong>Time:</strong> ${pokemon.spawnTime}</p>
+                    </div>
+                </div>
+                
+                <button id="back-button">Back to list</button>
+            `;
+
+            document.querySelector("#pokemon-table").classList.add("hidden");
+            detailsDiv.classList.remove("hidden");
+
+            document.getElementById("back-button").addEventListener("click", goBack);
+        }
+
+        function goBack() {
+            history.pushState({}, "", location.pathname);
+            detailsDiv.classList.add("hidden");
+            document.querySelector("#pokemon-table").classList.remove("hidden");
+        }
+
+        function sortTable(key) {
+            const direction = currentSort.key === key ? -currentSort.direction : 1;
+            currentSort = { key, direction };
+            displayedList.sort((a, b) => {
+                if (a[key] < b[key]) return -1 * direction;
+                if (a[key] > b[key]) return 1 * direction;
+                return 0;
+            });
+            displayPokemonList();
+        }
+
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase();
+            displayedList = pokemonList.filter(p => p.name.includes(query));
+            displayPokemonList();
+        });
+
+        tableHeaders.forEach(th => {
+            th.addEventListener("click", () => sortTable(th.dataset.key));
+        });
+
+        window.addEventListener("popstate", () => {
+            if (location.hash.startsWith("#pokemon/")) {
+                const name = location.hash.split("/")[1];
+                showPokemonDetails(name);
+            } else {
+                goBack();
+            }
+        });
+    </script>
 </body>
 
 </html>
