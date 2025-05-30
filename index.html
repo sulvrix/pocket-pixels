@@ -184,7 +184,7 @@
         let displayedList = [];
 
         // Fetch data from JSON file
-        fetch('pocket-pixels/data/pokemon-data.json')
+        fetch('/data/pokemon-data.json')
             .then(response => response.json())
             .then(data => {
                 // Transform the data to match our structure
@@ -211,7 +211,7 @@
                         speed: stats[6],
                         spawnLocation: pokemon.data[14],
                         spawnTime: pokemon.data[15],
-                        sprite: `pocket-pixels/assets/${pokemon.id}.png`
+                        sprite: `/assets/${pokemon.id}.png`
                     };
                 });
 
