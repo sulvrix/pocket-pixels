@@ -184,7 +184,7 @@
         let displayedList = [];
 
         // Fetch data from JSON file
-        fetch('pocket-pixels/data/pokemon-data.json')
+        fetch('/data/pokemon-data.json')
             .then(response => response.json())
             .then(data => {
                 // Transform the data to match our structure
@@ -196,7 +196,7 @@
                     });
 
                     return {
-                        id: parseInt(pokemon.id, 10),
+                        id: pokemon.id,
                         name: pokemon.data[0].toLowerCase(),
                         displayName: pokemon.data[0],
                         types: pokemon.data.slice(1, 3).filter(type => type !== "-"),
@@ -211,7 +211,7 @@
                         speed: stats[6],
                         spawnLocation: pokemon.data[14],
                         spawnTime: pokemon.data[15],
-                        sprite: `pocket-pixels/assets/${pokemon.id}.png`
+                        sprite: `/assets/${pokemon.id}.png`
                     };
                 });
 
@@ -236,7 +236,7 @@
             displayedList.forEach((pokemon) => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td class="fw-bold">${pokemon.id}</td>
+                    <td class="fw-bold">${parseInt(pokemon.id)}</td>
                     <td class="text-capitalize">${pokemon.name}</td>
                     <td>${pokemon.types.map(type => `<span class="type-badge ${type.toLowerCase()}">${type}</span>`).join('')}</td>
                     <td>${pokemon.form}</td>
@@ -257,7 +257,7 @@
         }
 
         function showPokemonDetails(id) {
-            const pokemon = pokemonList.find(p => p.id === id.toString());
+            const pokemon = pokemonList.find(p => p.id.toString() === id.toString());
             if (!pokemon) return;
 
             detailsContent.innerHTML = `
