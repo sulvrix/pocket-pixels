@@ -219,8 +219,8 @@
                 displayPokemonList();
 
                 if (location.hash.startsWith("#pokemon/")) {
-                    const name = location.hash.split("/")[1];
-                    showPokemonDetails(name);
+                    const id = location.hash.split("/")[1];
+                    showPokemonDetails(id);
                 }
             })
             .catch(error => {
@@ -249,15 +249,15 @@
                     <td>${pokemon.speed}</td>
                 `;
                 tr.addEventListener("click", () => {
-                    history.pushState({}, "", `#pokemon/${pokemon.name}`);
-                    showPokemonDetails(pokemon.name);
+                    history.pushState({}, "", `#pokemon/${pokemon.id}`);
+                    showPokemonDetails(pokemon.id);
                 });
                 tableBody.appendChild(tr);
             });
         }
 
-        function showPokemonDetails(name) {
-            const pokemon = pokemonList.find(p => p.name === name);
+        function showPokemonDetails(id) {
+            const pokemon = pokemonList.find(p => p.id === id.toString());
             if (!pokemon) return;
 
             detailsContent.innerHTML = `
@@ -381,8 +381,8 @@
 
         window.addEventListener("popstate", () => {
             if (location.hash.startsWith("#pokemon/")) {
-                const name = location.hash.split("/")[1];
-                showPokemonDetails(name);
+                const id = location.hash.split("/")[1];
+                showPokemonDetails(id);
             } else {
                 goBack();
             }
