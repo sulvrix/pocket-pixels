@@ -201,7 +201,7 @@
                         displayName: pokemon.data[0],
                         types: pokemon.data.slice(1, 3).filter(type => type !== "-"),
                         form: pokemon.data[3],
-                        abilities: pokemon.data.slice(4, 7).filter(ability => ability !== "-").map((ability, index) => index === 2 ? `<strong style="color: #c8c8c8;">${ability}</strong>` : ability),
+                        abilities: pokemon.data.slice(4, 7).filter(ability => ability !== "-").map((ability, index) => index === 2 ? `<span style="color: #000;">${ability} (HA)</span>` : ability),
                         total: parseInt(pokemon.data[7].split(' ')[0], 10),
                         hp: stats[1],
                         attack: stats[2],
@@ -263,7 +263,7 @@
             detailsContent.innerHTML = `
                 <div class="text-center mb-4">
                     <img src="${pokemon.sprite}" alt="${pokemon.name}" class="pokemon-image">
-                    <h2 class="mb-3">${pokemon.displayName} <span class="text-muted">#${pokemon.id.toString().padStart(3, '0')}</span></h2>
+                    <h2 class="mb-3">${pokemon.displayName} <span class="text-muted">#${parseInt(pokemon.id).toString().padStart(3, '0')}</span></h2>
                     <div class="d-flex justify-content-center gap-2 mb-3">
                         ${pokemon.types.map(type => `<span class="type-badge ${type.toLowerCase()}">${type}</span>`).join('')}
                     </div>
